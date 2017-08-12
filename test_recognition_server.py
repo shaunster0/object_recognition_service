@@ -67,6 +67,14 @@ class Recognition_ServerTestCase(unittest.TestCase):
            content_type = 'application/json')
         self.assertEqual(rv.status_code, 200)
         self.assertIn(b'true',rv.data)
+        
+    def test_put_inference_on_image(self):
+        """Use PUT to run inference on an image"""
+        rv=self.app.put('/img/api/v1.0/infer/1',
+           data = json.dumps(dict(id = 1)),
+           content_type = 'application/json')
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'0.5944', rv.data)
     
 if __name__ == '__main__':
         unittest.main()
