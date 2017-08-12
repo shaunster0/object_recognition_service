@@ -30,6 +30,18 @@ class Recognition_ServerTestCase(unittest.TestCase):
         """Check that 404 gets thrown for a function that doesn't exist"""
         rv = self.app.get('/img/api/v1.0/a-bad-address')
         self.assertEqual(rv.status_code, 404)
+        
+    def test_get_individual_image(self):
+        """Check that an image exists"""
+        rv = self.app.get('/img/api/v1.0/images/2')
+        #headers=headers)
+        self.assertEqual(rv.status_code, 200)    
+    
+    def test_get_non_existing_individual_image(self):
+        """Check that 404 gets thrown for an image address that doesn't exist"""
+        rv = self.app.get('/img/api/v1.0/images/crazy-non-existing')
+        self.assertEqual(rv.status_code, 404)   
+    
     
 if __name__ == '__main__':
         unittest.main()
