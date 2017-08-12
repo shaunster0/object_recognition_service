@@ -97,3 +97,13 @@ def index():
 def get_imgs():
     return jsonify({'images': images})
 
+
+### test String
+### curl -i http://127.0.0.1:5000/img/api/v1.0/images/2
+@app.route('/img/api/v1.0/images/<int:img_id>', methods = ['GET'])
+#@auth.login_required
+def get_img(img_id):
+    img = [img for img in images if img['id'] == img_id]
+    if len(img) == 0:
+        abort(404)
+    return jsonify({'img': img[0]})
