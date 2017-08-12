@@ -244,6 +244,26 @@ def create_graph():
     _ = tf.import_graph_def(graph_def, name='')
     
 
+def check_valid_url(imgURL):
+    
+    if imgURL.split('.')[-1] in ['jpg', 'png', 'gif']:
+        try:
+            imagePath, headers = urllib.request.urlretrieve(imgURL)
+        except:
+            error_dict = {"error": "invalid URL"}
+            return error_dict, False
+
+        try:
+            _ = Image.open(imagePath)
+            return imagePath, True
+        except IOError:
+            error_dict = {"error": "URL cannot be opened"}
+            return error_dict, False
+    else:
+        error_dict = {"error": "URL required for jpg, png or gif file"}
+        return error_dict, False
+    
+
 def download_and_extract_model_if_needed():
   """Download and extract model tar file."""
   dest_directory = FLAGS.model_dir
