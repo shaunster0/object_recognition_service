@@ -169,6 +169,21 @@ def delete_img(img_id):
     return jsonify({'result': True})
 
 
+class NodeLookup(object):
+  """Converts integer node ID's to human readable labels."""
+
+  def __init__(self,
+               label_lookup_path=None,
+               uid_lookup_path=None):
+    if not label_lookup_path:
+      label_lookup_path = os.path.join(
+          FLAGS.model_dir, 'imagenet_2012_challenge_label_map_proto.pbtxt')
+    if not uid_lookup_path:
+      uid_lookup_path = os.path.join(
+          FLAGS.model_dir, 'imagenet_synset_to_human_label_map.txt')
+    self.node_lookup = self.load(label_lookup_path, uid_lookup_path)
+    
+
 def download_and_extract_model_if_needed():
   """Download and extract model tar file."""
   dest_directory = FLAGS.model_dir
