@@ -3,6 +3,7 @@
 Created on Sat Aug 12 19:16:24 2017
 
 @author: Shaun Werkhoven
+@purpose: run unit tests for recognition_server.py
 """
 
 import pytest
@@ -42,6 +43,16 @@ class Recognition_ServerTestCase(unittest.TestCase):
         rv = self.app.get('/img/api/v1.0/images/crazy-non-existing')
         self.assertEqual(rv.status_code, 404)   
     
+    def test_create_new_images(self):
+        """create a new image file using JSON and POST"""
+        new_im1 = dict(url = 'http://imgdirect.s3-website-us-west-2.amazonaws.com/neither1.jpg')
+        new_im2 = dict(url = 'http://imgdirect.s3-website-us-west-2.amazonaws.com/neither2.jpg')
+        rv=self.app.post('/img/api/v1.0/images',
+           data=json.dumps(dict(new_imgs = [new_im1, new_im2])),
+           content_type = 'application/json')
+        self.assertEqual(rv.status_code, 201)
+        self.assertIn(b'neither1.jpg', rv.data)
+        self.assertIn(b'neither2.jpg', rv.data)
     
 if __name__ == '__main__':
         unittest.main()
