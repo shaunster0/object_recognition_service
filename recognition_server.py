@@ -157,6 +157,18 @@ def add_imgs():
     return return_val
 
 
+### test String
+### curl -i -H "Content-Type: application/json" -X DELETE http://127.0.0.1:5000/img/api/v1.0/images/3
+@app.route('/img/api/v1.0/images/<int:img_id>', methods=['DELETE'])
+#@auth.login_required
+def delete_img(img_id):
+    img = [img for img in images if img['id'] == img_id]
+    if len(img) == 0:
+        abort(404)
+    images.remove(img[0])
+    return jsonify({'result': True})
+
+
 def main():
     app.run(host = '0.0.0.0')
 

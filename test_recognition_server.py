@@ -61,5 +61,12 @@ class Recognition_ServerTestCase(unittest.TestCase):
            content_type = 'application/json')
         self.assertEqual(rv.status_code, 400)
     
+    def test_delete_existing_image(self):
+        """Does a record get deleted correctly"""
+        rv=self.app.delete('/img/api/v1.0/images/3',
+           content_type = 'application/json')
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn(b'true',rv.data)
+    
 if __name__ == '__main__':
         unittest.main()
