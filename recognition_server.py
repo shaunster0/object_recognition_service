@@ -38,4 +38,49 @@ from flask import Flask, jsonify, render_template, abort, make_response, request
 from flask_httpauth import HTTPBasicAuth
 from PIL import Image
 
+auth = HTTPBasicAuth()
+app = Flask(__name__)
+
+FLAGS = None
+
+DATA_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
+
+images = [
+    {
+        'id': 1,
+        'title': u'Nikes',
+        'url': 'http://imgdirect.s3-website-us-west-2.amazonaws.com/nike.jpg',
+        'results': '',
+        'resize': False,
+        'size': ""
+    },
+    {
+        'id': 2,
+        'title': u'Altra',
+        'url': 'https://s3-us-west-2.amazonaws.com/imgdirect/altra.jpg',
+        'results': '',
+        'resize': False,
+        'size': ""
+    }
+]
+
+@auth.error_handler
+def unauthorized():
+    return make_response(jsonify({'error': 'unauthorized access'}), 403)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'not found'}), 404)
+
+
+@app.errorhandler(400)
+def bad_request(error):
+    return make_response(jsonify({'error': 'missing json data'}), 400)
+
+
+@app.errorhandler(410)
+def missing_URL(error):
+    return make_response(jsonify({'error': 'missing URL field'}), 410)
+
 
