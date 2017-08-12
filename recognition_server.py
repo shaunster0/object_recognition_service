@@ -84,3 +84,16 @@ def missing_URL(error):
     return make_response(jsonify({'error': 'missing URL field'}), 410)
 
 
+@app.route('/')
+@app.route('/index')
+def index():
+    return "Hello, World!"
+    
+
+### test string
+### curl -i http://127.0.0.1:5000/img/api/v1.0/images
+@app.route('/img/api/v1.0/images', methods=['GET'])
+#@auth.login_required
+def get_imgs():
+    return jsonify({'images': images})
+
