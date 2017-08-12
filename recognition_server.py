@@ -42,6 +42,7 @@ auth = HTTPBasicAuth()
 app = Flask(__name__)
 
 FLAGS = None
+unparsed = None
 
 DATA_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
 
@@ -268,6 +269,8 @@ class NodeLookup(object):
 def create_graph():
   """Creates a graph from saved GraphDef file and returns a saver."""
   # Creates graph from saved graph_def.pb.
+  if FLAGS == None:
+      parse_args()
   with tf.gfile.FastGFile(os.path.join(
       FLAGS.model_dir, 'classify_image_graph_def.pb'), 'rb') as f:
     graph_def = tf.GraphDef()
@@ -370,12 +373,8 @@ def download_and_extract_model_if_needed():
   tarfile.open(filepath, 'r:gz').extractall(dest_directory)
 
 
-def main(_):
-    download_and_extract_model_if_needed()
-    app.run(host = '0.0.0.0')
-
-
-if __name__ == '__main__':
+def parse_args():
+    global FLAGS, unparsed
     parser = argparse.ArgumentParser()
   # classify_image_graph_def.pb:
   #   Binary representation of the GraphDef protocol buffer.
@@ -406,5 +405,13 @@ if __name__ == '__main__':
       help = 'Display this many predictions.'
   )
     FLAGS, unparsed = parser.parse_known_args()
+
+def main(_):
+    download_and_extract_model_if_needed()
+    app.run(host = '0.0.0.0')
+
+
+if __name__ == '__main__':
+    parse_args()
     tf.app.run(main = main, argv = [sys.argv[0]] + unparsed)
     
