@@ -183,6 +183,31 @@ class NodeLookup(object):
           FLAGS.model_dir, 'imagenet_synset_to_human_label_map.txt')
     self.node_lookup = self.load(label_lookup_path, uid_lookup_path)
     
+    def load(self, label_lookup_path, uid_lookup_path):
+    """Loads a human readable English name for each softmax node.
+
+    Args:
+      label_lookup_path: string UID to integer node ID.
+      uid_lookup_path: string UID to human-readable string.
+
+    Returns:
+      dict from integer node ID to human-readable string.
+    """
+    if not tf.gfile.Exists(uid_lookup_path):
+      tf.logging.fatal('File does not exist %s', uid_lookup_path)
+    if not tf.gfile.Exists(label_lookup_path):
+      tf.logging.fatal('File does not exist %s', label_lookup_path)
+
+    # Loads mapping from string UID to human-readable string
+    proto_as_ascii_lines = tf.gfile.GFile(uid_lookup_path).readlines()
+    uid_to_human = {}
+    p = re.compile(r'[n\d]*[ \S,]*')
+    for line in proto_as_ascii_lines:
+      parsed_items = p.findall(line)
+      uid = parsed_items[0]
+      human_string = parsed_items[2]
+      uid_to_human[uid] = human_string
+                  
 
 def download_and_extract_model_if_needed():
   """Download and extract model tar file."""
