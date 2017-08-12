@@ -107,3 +107,53 @@ def get_img(img_id):
     if len(img) == 0:
         abort(404)
     return jsonify({'img': img[0]})
+
+
+### test String
+### curl -i -H "Content-Type: application/json" -X POST -d '{"url":"http://imgdirect.s3-website-us-west-2.amazonaws.com/neither.jpg"}' http://127.0.0.1:5000/img/api/v1.0/images
+@app.route('/img/api/v1.0/images', methods = ['POST'])
+#@auth.login_required
+def add_imgs():
+    if not request.json:
+        abort(400)
+        
+    missing_url = False
+    json_str = request.json
+    img_data = json_str['new_imgs']
+    new_images = []
+    
+    for img in img_data:
+        if img.get('url') == None:
+            missing_url = True
+            continue
+        
+        if img.get('title') == None:
+            new_title = ""
+        else:
+            new_title = img.get('title')
+        if img.get('results') == None:
+            new_results = ""
+        else:
+            new_results = img.get('results')
+            
+        image = {
+            # simple way to ensure a unique id
+            'id' : images[-1]['id'] + 1,
+            'title': new_title,
+            # url is required, otherwise return error
+            'url': img['url'],
+            'results': new_results,
+            'resize': False,
+            'size': ""
+        }
+        images.append(image)
+        new_images.append(image)
+        
+    if missing_url:
+        return_val = jsonify(new_images), 410
+    else:
+        return_val = jsonify(new_images), 201
+    
+    return return_val
+
+
