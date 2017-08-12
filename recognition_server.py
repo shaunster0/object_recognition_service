@@ -173,6 +173,21 @@ def infer(img_id):
     return jsonify({'img': img[0]}), 200
 
 
+### test string
+### curl -X PUT -i http://127.0.0.1:5000/img/api/v1.0/inferundone
+@app.route('/img/api/v1.0/inferundone', methods = ['PUT'])
+#@auth.login_required
+def infer_undone():
+    undone_imgs = [img for img in images if img['results'] == '']
+    if len(undone_imgs) == 0:
+        abort(404)
+    
+    for img in undone_imgs:
+        img['results'] = run_inference_on_image(img['url'])
+        
+    return jsonify({'images': undone_imgs}), 200
+
+
 ### test String
 ### curl -i -H "Content-Type: application/json" -X DELETE http://127.0.0.1:5000/img/api/v1.0/images/3
 @app.route('/img/api/v1.0/images/<int:img_id>', methods=['DELETE'])
