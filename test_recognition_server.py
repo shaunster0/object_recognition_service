@@ -76,5 +76,15 @@ class Recognition_ServerTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 200)
         self.assertIn(b'0.5944', rv.data)
     
+    def test_add_and_inference_on_image(self):
+        """Use POST to run inference and add image"""
+        new_im = {"url": "https://farm4.static.flickr.com/3118/3275588806_33384d2638.jpg"}
+        newims = dict(new_imgs = [new_im])
+        rv=self.app.post('/img/api/v1.0/imagesinfer',
+           data = json.dumps(newims),
+           content_type = 'application/json')
+        self.assertEqual(rv.status_code, 201)
+        self.assertIn(b'0.1822', rv.data)
+    
 if __name__ == '__main__':
         unittest.main()
