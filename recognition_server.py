@@ -157,6 +157,22 @@ def add_imgs():
     return return_val
 
 
+### test string
+### curl -X PUT -i -H "Content-Type: application/json" -d '{ \"id\": \"1\"}' http://127.0.0.1:5000/img/api/v1.0/infer/1
+@app.route('/img/api/v1.0/infer/<int:img_id>', methods = ['PUT'])
+#@auth.login_required
+def infer(img_id):
+    img = [img for img in images if img['id'] == img_id]
+    if len(img) == 0:
+        abort(404)
+    if not request.json:
+        abort(400)
+        
+    url = img[0]['url']
+    img[0]['results'] = run_inference_on_image(url)
+    return jsonify({'img': img[0]}), 200
+
+
 ### test String
 ### curl -i -H "Content-Type: application/json" -X DELETE http://127.0.0.1:5000/img/api/v1.0/images/3
 @app.route('/img/api/v1.0/images/<int:img_id>', methods=['DELETE'])
