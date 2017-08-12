@@ -190,6 +190,52 @@ def infer_undone():
 
 
 ### test String
+### curl -i -H "Content-Type: application/json" -X POST -d '{"url":"http://imgdirect.s3-website-us-west-2.amazonaws.com/neither.jpg"}' http://127.0.0.1:5000/img/api/v1.0/imagesinfer
+@app.route('/img/api/v1.0/imagesinfer', methods = ['POST'])
+#@auth.login_required
+def add_imgs_infer():
+    
+    if not request.json:
+        abort(400)
+        
+    missing_url = False
+    json_str = request.json
+    img_data = json_str['new_imgs']
+    new_images = []
+    
+    for img in img_data:
+        if img.get('url') == None:
+            missing_url = True
+            continue
+        
+        if img.get('title') == None:
+            new_title = ""
+        else:
+            new_title = img.get('title')
+        new_results = run_inference_on_image(img['url'])
+        
+        image = {
+            # simple way to ensure a unique id
+            'id' : images[-1]['id'] + 1,
+            'title': new_title,
+            # url is required, otherwise return error
+            'url': img['url'],
+            'results': new_results,
+            'resize': False,
+            'size': ""
+        }
+        images.append(image)
+        new_images.append(image)
+        
+    if missing_url:
+        return_val = jsonify(new_images), 410
+    else:
+        return_val = jsonify(new_images), 201
+    
+    return return_val
+
+
+### test String
 ### curl -i -H "Content-Type: application/json" -X DELETE http://127.0.0.1:5000/img/api/v1.0/images/3
 @app.route('/img/api/v1.0/images/<int:img_id>', methods=['DELETE'])
 #@auth.login_required
@@ -405,6 +451,7 @@ def parse_args():
       help = 'Display this many predictions.'
   )
     FLAGS, unparsed = parser.parse_known_args()
+
 
 def main(_):
     download_and_extract_model_if_needed()
