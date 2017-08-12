@@ -227,7 +227,13 @@ class NodeLookup(object):
       node_id_to_name[key] = name
 
     return node_id_to_name
-              
+         
+  def id_to_string(self, node_id):
+    if node_id not in self.node_lookup:
+      return ''
+    return self.node_lookup[node_id]     
+
+
 
 def download_and_extract_model_if_needed():
   """Download and extract model tar file."""
