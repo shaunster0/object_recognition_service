@@ -54,5 +54,12 @@ class Recognition_ServerTestCase(unittest.TestCase):
         self.assertIn(b'neither1.jpg', rv.data)
         self.assertIn(b'neither2.jpg', rv.data)
     
+    def test_create_not_json_new_image(self):
+        """attempt to create an image without JSON"""
+        rv=self.app.post('/img/api/v1.0/images',
+           data = '[http://imgdirect.s3-website-us-west-2.amazonaws.com/neither.jpg]',
+           content_type = 'application/json')
+        self.assertEqual(rv.status_code, 400)
+    
 if __name__ == '__main__':
         unittest.main()
