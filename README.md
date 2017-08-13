@@ -1,13 +1,13 @@
 # object\_recognition\_service
 ## web-based object recognition with CNN
 
-**Introduction:** in this project I am building a CNN-based object recognition service. The main architectural features are a HTTP API using Flask, and image classification using TensorFlow and a 3rd party class zoo.
+**Introduction:** in this project I am building a CNN-based object recognition service. The main architectural features are a HTTP API using Flask (with data JSON encoded), and image classification using TensorFlow and a 3rd party class zoo.
 
 **Requirements:** Python3, a number of packages such as Flask, TensorFlow, flask\_httpauth, Numpy, as well as some more common packages
 
-**Installation:** obtain from GitHub at https://github.com/shaunster0/object_recognition_service (either clone or download \*.zip file and unzip). We will refer to thhe installation directory as the parent directory.
+**Installation:** obtain from GitHub at https://github.com/shaunster0/object_recognition_service (either clone or download \*.zip file and unzip). We will refer to the installation directory as the parent directory.
 
-**Usage:** open a command prompt or shell in the parent directory (installation directory).
+**Usage:** open a command prompt or shell in the **parent directory (installation directory)**.
 
 To run the main server enter-
 
@@ -20,5 +20,7 @@ To run the unit tests enter-
 If the server is already running, a client program can be run, such as the example in the \examples subdirectory
 
 \>python example\_client.py
+
+**Internal Data Structure:** the server maintains a list of images (with URLs) in JSON format. These may or may not have had recognition inference run on them. This list can be regarded as a list of tasks to do, or that have been done.
 
 
