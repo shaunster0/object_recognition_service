@@ -8,10 +8,14 @@ TakeHome Assignment
 
 Licensed under the Apache License, Version 2.0 (the "License");
 
-Simple image classification with TensorFlow and the Inception model.
+Simple image classification with flask-based HTTP API, TensorFlow 
+and the Inception model (trained on ImageNet 2012 Challenge data
+set).
 
-Run image classification with Inception trained on ImageNet 2012 Challenge data
-set.
+The server maintains a list of images, with URLs, on which image inference can 
+be run, or has been run. It is a list of tasks to do, or that 
+have been done. Functions to add, delete or run inference on images are given
+as HTTP addresses, using JSON arguments.
 
 This program creates a graph from a saved GraphDef protocol buffer,
 and runs inference on an input JPEG, GIF or PNG image. It outputs human readable
@@ -34,7 +38,7 @@ import tensorflow as tf
 
 import json
 import urllib
-from flask import Flask, jsonify, render_template, abort, make_response, request, Markup
+from flask import Flask, jsonify, abort, make_response, request
 from flask_httpauth import HTTPBasicAuth
 from PIL import Image
 
@@ -42,7 +46,6 @@ auth = HTTPBasicAuth()
 app = Flask(__name__)
 
 FLAGS = None
-unparsed = None
 
 DATA_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
 
@@ -315,8 +318,6 @@ class NodeLookup(object):
 def create_graph():
   """Creates a graph from saved GraphDef file and returns a saver."""
   # Creates graph from saved graph_def.pb.
-  if FLAGS == None:
-      parse_args()
   with tf.gfile.FastGFile(os.path.join(
       FLAGS.model_dir, 'classify_image_graph_def.pb'), 'rb') as f:
     graph_def = tf.GraphDef()
@@ -420,7 +421,7 @@ def download_and_extract_model_if_needed():
 
 
 def parse_args():
-    global FLAGS, unparsed
+    global FLAGS
     parser = argparse.ArgumentParser()
   # classify_image_graph_def.pb:
   #   Binary representation of the GraphDef protocol buffer.
@@ -450,15 +451,15 @@ def parse_args():
       default = 5,
       help = 'Display this many predictions.'
   )
-    FLAGS, unparsed = parser.parse_known_args()
+    FLAGS, _ = parser.parse_known_args()
 
 
 def main(_):
+    parse_args()
     download_and_extract_model_if_needed()
     app.run(host = '0.0.0.0')
 
 
 if __name__ == '__main__':
-    parse_args()
-    tf.app.run(main = main, argv = [sys.argv[0]] + unparsed)
+    tf.app.run(main = main, argv = [sys.argv[0]])
     

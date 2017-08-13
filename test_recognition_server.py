@@ -17,6 +17,7 @@ class Recognition_ServerTestCase(unittest.TestCase):
     def setUp(self):
         recognition_server.app.config['TESTING'] = True
         self.app = recognition_server.app.test_client()
+        recognition_server.parse_args()
      
     def tearDown(self):
         pass
