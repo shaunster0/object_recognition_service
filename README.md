@@ -25,7 +25,7 @@ If the server is already running, a client program can be run, such as the examp
 
 **Example:** as an example, if the recognition\_server is running the Python command '
 
-'requests.put('http://127.0.0.1:5000/img/api/v1.0/infer/1', json = dict(id = 1))'
+requests.put('http://127.0.0.1:5000/img/api/v1.0/infer/1', json = dict(id = 1))
 
 gives the output
 
@@ -37,23 +37,23 @@ gives the output
         "results": {
             "0": {
                 "results_name": "running shoe",
-                "results\_score": "0.5944"
+                "results_score": "0.5944"
             },
             "1": {
                 "results_name": "Loafer",
-                "results\_score": "0.0459"
+                "results_score": "0.0459"
             },
             "2": {
                 "results_name": "jean, blue jean, denim",
-                "results\_score": "0.0165"
+                "results_score": "0.0165"
             },
             "3": {
                 "results_name": "clog, geta, patten, sabot",
-                "results\_score": "0.0158"
+                "results_score": "0.0158"
             },
             "4": {
                 "results_name": "cowboy boot",
-                "results\_score": "0.0115"
+                "results_score": "0.0115"
             }
         },
         "size": "",
