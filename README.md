@@ -29,7 +29,8 @@ If the server is already running, a client program can be run, such as the examp
 
 gives the output
 
->{
+```json
+{
     "img": {
         "id": 1,
         "resize": false,
@@ -60,4 +61,5 @@ gives the output
         "url": "http://imgdirect.s3-website-us-west-2.amazonaws.com/nike.jpg"
     }
 }
+```
 
