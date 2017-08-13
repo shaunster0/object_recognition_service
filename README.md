@@ -23,9 +23,9 @@ If the server is already running, a client program can be run, such as the examp
 
 **Internal Data Structure:** the server maintains a list of images (with URLs) in JSON format. These may or may not have had recognition inference run on them. This list can be regarded as a list of tasks to do, or that have been done.
 
-**Example:** as an example, if the recognition\_server is running the Python command '
+**Example:** as an example, if the recognition\_server is running the Python command
 
-requests.put('http://127.0.0.1:5000/img/api/v1.0/infer/1', json = dict(id = 1))
+`requests.put('http://127.0.0.1:5000/img/api/v1.0/infer/1', json = dict(id = 1))`
 
 gives the output
 
