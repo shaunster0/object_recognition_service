@@ -37,9 +37,11 @@ except:
     import tf_operations
 
 
+# set up HTTP app
 auth = HTTPBasicAuth()
 app = Flask(__name__)
 
+# initialise image list with some random images, not strictly necessary
 images = [
     {
         'id': 1,
@@ -59,6 +61,7 @@ images = [
     }
 ]
 
+# set up some error handlers
 @auth.error_handler
 def unauthorized():
     return make_response(jsonify({'error': 'unauthorized access'}), 403)
@@ -79,36 +82,51 @@ def missing_URL(error):
     return make_response(jsonify({'error': 'missing URL field'}), 410)
 
 
+# first API function, can be used for testing
 @app.route('/')
 @app.route('/index')
 def index():
+    """returns Hello, World!"""
     return "Hello, World!"
     
 
-### test string
-### curl -i http://127.0.0.1:5000/img/api/v1.0/images
+# test string
+# curl -i http://127.0.0.1:5000/img/api/v1.0/images
 @app.route('/img/api/v1.0/images', methods=['GET'])
 #@auth.login_required
 def get_imgs():
+    """
+    returns in JSON format all the images currently stored by the server. 
+    Includes all fields, such as ID, and URL
+    """
     return jsonify({'images': images})
 
 
-### test String
-### curl -i http://127.0.0.1:5000/img/api/v1.0/images/2
+# test String
+# curl -i http://127.0.0.1:5000/img/api/v1.0/images/2
 @app.route('/img/api/v1.0/images/<int:img_id>', methods = ['GET'])
 #@auth.login_required
 def get_img(img_id):
+    """
+    returns in JSON format a specific image currently stored by the server.
+    Requires the image ID to be included in the HTTP address
+    """
     img = [img for img in images if img['id'] == img_id]
     if len(img) == 0:
         abort(404)
     return jsonify({'img': img[0]})
 
 
-### test String
-### curl -i -H "Content-Type: application/json" -X POST -d '{"url":"http://imgdirect.s3-website-us-west-2.amazonaws.com/neither.jpg"}' http://127.0.0.1:5000/img/api/v1.0/images
+# test String
+# curl -i -H "Content-Type: application/json" -X POST -d '{"url":"http://imgdirect.s3-website-us-west-2.amazonaws.com/neither.jpg"}' http://127.0.0.1:5000/img/api/v1.0/images
 @app.route('/img/api/v1.0/images', methods = ['POST'])
 #@auth.login_required
 def add_imgs():
+    """
+    adds images to the server image list. The images must be provided as a list 
+    encoded with JSON and sent with the HTTP post. A URL is required. Inference 
+    is not automatically run on them.
+    """
     if not request.json:
         abort(400)
         
@@ -141,6 +159,7 @@ def add_imgs():
             'resize': False,
             'size': ""
         }
+        # add new image records to image list
         images.append(image)
         new_images.append(image)
         
@@ -152,11 +171,16 @@ def add_imgs():
     return return_val
 
 
-### test string
-### curl -X PUT -i -H "Content-Type: application/json" -d '{ \"id\": \"1\"}' http://127.0.0.1:5000/img/api/v1.0/infer/1
+# test string
+# curl -X PUT -i -H "Content-Type: application/json" -d '{ \"id\": \"1\"}' http://127.0.0.1:5000/img/api/v1.0/infer/1
 @app.route('/img/api/v1.0/infer/<int:img_id>', methods = ['PUT'])
 #@auth.login_required
 def infer(img_id):
+    """
+    runs TensorFlow inference (recognition) on an image which is already in the images 
+    list. The image ID must be included in the HTTP address and encoded with JSON.
+    Results are returned in JSON
+    """
     img = [img for img in images if img['id'] == img_id]
     if len(img) == 0:
         abort(404)
@@ -164,31 +188,43 @@ def infer(img_id):
         abort(400)
         
     url = img[0]['url']
+    # call TensorFlow
     img[0]['results'] = tf_operations.run_inference_on_image(url)
     return jsonify({'img': img[0]}), 200
 
 
-### test string
-### curl -X PUT -i http://127.0.0.1:5000/img/api/v1.0/inferundone
+# test string
+# curl -X PUT -i http://127.0.0.1:5000/img/api/v1.0/inferundone
+# calls TensorFlow, so can be slow if many images are undone
 @app.route('/img/api/v1.0/inferundone', methods = ['PUT'])
 #@auth.login_required
 def infer_undone():
+    """
+    runs TensorFlow inference (recognition) on all images which are in the images 
+    list but for which inference has not already been run. Results are returned in JSON
+    """
     undone_imgs = [img for img in images if img['results'] == '']
     if len(undone_imgs) == 0:
         abort(404)
     
     for img in undone_imgs:
+        # call TensorFlow
         img['results'] = tf_operations.run_inference_on_image(img['url'])
         
     return jsonify({'images': undone_imgs}), 200
 
 
-### test String
-### curl -i -H "Content-Type: application/json" -X POST -d '{"url":"http://imgdirect.s3-website-us-west-2.amazonaws.com/neither.jpg"}' http://127.0.0.1:5000/img/api/v1.0/imagesinfer
+# test String
+# curl -i -H "Content-Type: application/json" -X POST -d '{"url":"http://imgdirect.s3-website-us-west-2.amazonaws.com/neither.jpg"}' http://127.0.0.1:5000/img/api/v1.0/imagesinfer
+# another TensorFlow function, again can be slow if many images are added
 @app.route('/img/api/v1.0/imagesinfer', methods = ['POST'])
 #@auth.login_required
 def add_imgs_infer():
-    
+    """
+    adds new images to the image list and runs TensorFlow inference (recognition) 
+    on them. New images must be provided with a URL, and given in JSON format. 
+    Results are returned in JSON format.
+    """
     if not request.json:
         abort(400)
         
@@ -206,6 +242,7 @@ def add_imgs_infer():
             new_title = ""
         else:
             new_title = img.get('title')
+        # call TensorFlow
         new_results = tf_operations.run_inference_on_image(img['url'])
         
         image = {
@@ -229,11 +266,15 @@ def add_imgs_infer():
     return return_val
 
 
-### test String
-### curl -i -H "Content-Type: application/json" -X DELETE http://127.0.0.1:5000/img/api/v1.0/images/3
+# test String
+# curl -i -H "Content-Type: application/json" -X DELETE http://127.0.0.1:5000/img/api/v1.0/images/3
 @app.route('/img/api/v1.0/images/<int:img_id>', methods=['DELETE'])
 #@auth.login_required
 def delete_img(img_id):
+    """
+    deletes an image from the server image list. The image ID must be given in the HTTP
+    address
+    """
     img = [img for img in images if img['id'] == img_id]
     if len(img) == 0:
         abort(404)
