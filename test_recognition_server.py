@@ -6,8 +6,6 @@ Created on Sat Aug 12 19:16:24 2017
 @purpose: run unit tests for recognition_server.py
 """
 
-import pytest
-import os
 import recognition_server
 import unittest
 import json
@@ -17,7 +15,7 @@ class Recognition_ServerTestCase(unittest.TestCase):
     def setUp(self):
         recognition_server.app.config['TESTING'] = True
         self.app = recognition_server.app.test_client()
-        recognition_server.parse_args()
+        recognition_server.tf_operations.parse_args()
      
     def tearDown(self):
         pass
