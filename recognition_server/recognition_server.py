@@ -31,7 +31,11 @@ import sys
 import json
 from flask import Flask, jsonify, abort, make_response, request
 from flask_httpauth import HTTPBasicAuth
-import tf_operations
+try:
+    from recognition_server import tf_operations
+except:
+    import tf_operations
+
 
 auth = HTTPBasicAuth()
 app = Flask(__name__)
