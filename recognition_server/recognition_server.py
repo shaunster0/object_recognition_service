@@ -61,7 +61,7 @@ images = [
     }
 ]
 
-# set up some error handlers
+# set up some HTTP error handlers
 @auth.error_handler
 def unauthorized():
     return make_response(jsonify({'error': 'unauthorized access'}), 403)
@@ -136,6 +136,7 @@ def add_imgs():
     new_images = []
     
     for img in img_data:
+        # URL is required, other fields not
         if img.get('url') == None:
             missing_url = True
             continue
@@ -234,6 +235,7 @@ def add_imgs_infer():
     new_images = []
     
     for img in img_data:
+        # URL is required, other fields not
         if img.get('url') == None:
             missing_url = True
             continue
@@ -284,6 +286,7 @@ def delete_img(img_id):
 
 def main(_):
     tf_operations.parse_args()
+    # checks if model data is downloaded. If not, does that
     tf_operations.download_and_extract_model_if_needed()
     app.run(host = '0.0.0.0')
 

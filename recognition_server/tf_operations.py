@@ -15,16 +15,16 @@ import urllib
 from PIL import Image
 
 
+# stores command line args, such as recognition confidence threshold
 FLAGS = None
+# URL for inception model data
 DATA_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
 
 
 class NodeLookup(object):
   """Converts integer node ID's to human readable labels."""
 
-  def __init__(self,
-               label_lookup_path=None,
-               uid_lookup_path=None):
+  def __init__(self, label_lookup_path = None, uid_lookup_path = None):
     if not label_lookup_path:
       label_lookup_path = os.path.join(
           FLAGS.model_dir, 'imagenet_2012_challenge_label_map_proto.pbtxt')
@@ -35,13 +35,9 @@ class NodeLookup(object):
 
   def load(self, label_lookup_path, uid_lookup_path):
     """Loads a human readable English name for each softmax node.
-
-    Args:
-      label_lookup_path: string UID to integer node ID.
-      uid_lookup_path: string UID to human-readable string.
-
-    Returns:
-      dict from integer node ID to human-readable string.
+    Arg is a label_lookup_path: string UID to integer node ID.
+    uid_lookup_path: string UID to human-readable string.
+    Returns a dict from integer node ID to human-readable string.
     """
     if not tf.gfile.Exists(uid_lookup_path):
       tf.logging.fatal('File does not exist %s', uid_lookup_path)
@@ -79,14 +75,14 @@ class NodeLookup(object):
     return node_id_to_name
 
   def id_to_string(self, node_id):
+    """ looksup node_id"""
     if node_id not in self.node_lookup:
       return ''
     return self.node_lookup[node_id]
 
 
 def create_graph():
-  """Creates a graph from saved GraphDef file and returns a saver."""
-  # Creates graph from saved graph_def.pb.
+  """Creates a graph from saved GraphDef file."""
   with tf.gfile.FastGFile(os.path.join(
       FLAGS.model_dir, 'classify_image_graph_def.pb'), 'rb') as f:
     graph_def = tf.GraphDef()
@@ -95,7 +91,11 @@ def create_graph():
 
 
 def check_valid_url(imgURL):
-    
+    """
+    checks image URL for several possible errors: bad URL, URL is not an
+    accepted image format, and that the file cannot be opened (may be corrupted)
+    Returns error msg as a dictionary
+    """
     if imgURL.split('.')[-1] in ['jpg', 'png', 'gif']:
         try:
             imagePath, headers = urllib.request.urlretrieve(imgURL)
@@ -114,14 +114,11 @@ def check_valid_url(imgURL):
         return error_dict, False
 
 
+# this is the main TensorFlow function, where we have a TensorFlow session
 def run_inference_on_image(imgURL):
-  """Runs inference on an image.
-
-  Args:
-    imgURL: the URL of an image.
-
-  Returns:
-    Nothing
+  """
+  Runs inference on an image. Argument is imgURL: the URL of an image.Returns 
+  a dictionary of inference (recognition) results, as a class name and score
   """
   results_name = []
   results_score = []
@@ -171,8 +168,9 @@ def run_inference_on_image(imgURL):
     return results_dict        
 
 
+# needs internet connection, largish download
 def download_and_extract_model_if_needed():
-  """Download and extract model tar file."""
+  """Download and extract  model tar file if not already downloaded"""
   dest_directory = FLAGS.model_dir
   if not os.path.exists(dest_directory):
     os.makedirs(dest_directory)
@@ -191,6 +189,10 @@ def download_and_extract_model_if_needed():
 
 
 def parse_args():
+    """
+    parses command line arguments for location of model data, number of inference 
+    (recognition) predictions, and a confidence threshold for inference
+    """
     global FLAGS
     parser = argparse.ArgumentParser()
   # classify_image_graph_def.pb:
