@@ -23,4 +23,41 @@ If the server is already running, a client program can be run, such as the examp
 
 **Internal Data Structure:** the server maintains a list of images (with URLs) in JSON format. These may or may not have had recognition inference run on them. This list can be regarded as a list of tasks to do, or that have been done.
 
+**Example:** as an example, if the recognition\_server is running the Python command '
+
+'requests.put('http://127.0.0.1:5000/img/api/v1.0/infer/1', json = dict(id = 1))'
+
+gives the output
+
+{
+    "img": {
+        "id": 1,
+        "resize": false,
+        "results": {
+            "0": {
+                "results_name": "running shoe",
+                "results\_score": "0.5944"
+            },
+            "1": {
+                "results_name": "Loafer",
+                "results\_score": "0.0459"
+            },
+            "2": {
+                "results_name": "jean, blue jean, denim",
+                "results\_score": "0.0165"
+            },
+            "3": {
+                "results_name": "clog, geta, patten, sabot",
+                "results\_score": "0.0158"
+            },
+            "4": {
+                "results_name": "cowboy boot",
+                "results\_score": "0.0115"
+            }
+        },
+        "size": "",
+        "title": "Nikes",
+        "url": "http://imgdirect.s3-website-us-west-2.amazonaws.com/nike.jpg"
+    }
+}
 
