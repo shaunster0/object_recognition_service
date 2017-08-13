@@ -1,5 +1,5 @@
-# object_recognition_service
-##web-based object recognition with CNN
+# object\_recognition\_service
+## web-based object recognition with CNN
 
 **Introduction:** in this project I am building a CNN-based object recognition service. The main architectural features are a HTTP API using Flask, and image classification using TensorFlow and a 3rd party class zoo.
 
@@ -18,4 +18,7 @@ To run the unit tests enter-
 \>python -m unittest test.test\_recognition\_server
 
 If the server is already running, a client program can be run, such as the example in the \examples subdirectory
+
+\>python example\_client.py
+
 
