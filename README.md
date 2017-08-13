@@ -69,6 +69,8 @@ gives the output
 }
 ```
 
+For further example usage, see \examples\example\_client.py and the unit tests.
+
 ### **Bonus Points:** 
 1. the server allows a confidence threshold to be set as a command line argument '--threshold' .
 2. if a CUDA-enabled GPU is present with cuDNN installed, TensorFlow will use it.
