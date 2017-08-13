@@ -6,7 +6,7 @@ Created on Sat Aug 12 19:16:24 2017
 @purpose: run unit tests for recognition_server.py
 """
 
-import recognition_server
+from recognition_server import recognition_server
 import unittest
 import json
 

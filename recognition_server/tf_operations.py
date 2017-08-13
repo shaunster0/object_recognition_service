@@ -158,8 +158,9 @@ def run_inference_on_image(imgURL):
       human_string = node_lookup.id_to_string(node_id)
       score = predictions[node_id]
       #print('%s (score = %.5f)' % (human_string, score))
-      results_name.append(human_string)
-      results_score.append(score)
+      if (score > FLAGS.threshold):
+          results_name.append(human_string)
+          results_score.append(score)
      
     results_dict = {}
     i = 0
@@ -220,6 +221,13 @@ def parse_args():
       default = 5,
       help = 'Display this many predictions.'
   )
+    parser.add_argument(
+      '--threshold',
+      type = float,
+      default = 0.05,
+      help = 'Only retain recognition scores above this threshold.'
+  )
+    
     FLAGS, _ = parser.parse_known_args()
     
     
