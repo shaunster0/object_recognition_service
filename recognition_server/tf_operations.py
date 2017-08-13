@@ -36,7 +36,6 @@ class NodeLookup(object):
   def load(self, label_lookup_path, uid_lookup_path):
     """Loads a human readable English name for each softmax node.
     Arg is a label_lookup_path: string UID to integer node ID.
-    uid_lookup_path: string UID to human-readable string.
     Returns a dict from integer node ID to human-readable string.
     """
     if not tf.gfile.Exists(uid_lookup_path):
