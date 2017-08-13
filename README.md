@@ -9,5 +9,6 @@ Installation: obtain from GitHub at https://github.com/shaunster0/object_recogni
 
 Usage: open a command prompt or shell in the parent directory (installation directory).
 To run the main server enter-
->python -m recognition\_server.recognition\_server
+
+\>python -m recognition\_server.recognition\_server
 
